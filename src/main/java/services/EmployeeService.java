@@ -22,7 +22,7 @@ public class EmployeeService extends ServiceBase{
      * @param page ページ数
      * @return 表示するデータのリスト
      */
-    public List<EmployeeView> getPerPage(int page){
+    public List<EmployeeView> getPerPage(int page) {
         List<Employee> employees = em.createNamedQuery(JpaConst.Q_EMP_GET_ALL, Employee.class)
                 .setFirstResult(JpaConst.ROW_PER_PAGE * (page - 1))
                 .setMaxResults(JpaConst.ROW_PER_PAGE)
@@ -54,13 +54,15 @@ public class EmployeeService extends ServiceBase{
             //パスワードのハッシュ化
             String pass = EncryptUtil.getPasswordEncrypt(plainPass, pepper);
 
-            //社員番号とハッシュ化済パスワードを条件に未削除の従業員を１件取得する
+            //社員番号とハッシュ化済パスワードを条件に未削除の従業員を1件取得する
             e = em.createNamedQuery(JpaConst.Q_EMP_GET_BY_CODE_AND_PASS, Employee.class)
                     .setParameter(JpaConst.JPQL_PARM_CODE, code)
                     .setParameter(JpaConst.JPQL_PARM_PASSWORD, pass)
                     .getSingleResult();
-        }catch(NoResultException ex) {
+
+        } catch (NoResultException ex) {
         }
+
         return EmployeeConverter.toView(e);
     }
 
@@ -81,7 +83,7 @@ public class EmployeeService extends ServiceBase{
      */
     public long countByCode(String code) {
         //指定した社員番号を保持する従業員の件数を取得する
-        long employees_count = (long)em.createNamedQuery(JpaConst.Q_EMP_COUNT_REGISTERED_BY_CODE, Long.class)
+        long employees_count = (long) em.createNamedQuery(JpaConst.Q_EMP_COUNT_REGISTERED_BY_CODE, Long.class)
                 .setParameter(JpaConst.JPQL_PARM_CODE, code)
                 .getSingleResult();
         return employees_count;
@@ -95,7 +97,7 @@ public class EmployeeService extends ServiceBase{
      */
     public List<String> create(EmployeeView ev, String pepper) {
 
-        //パスワードをハッシュ化して設定
+      //パスワードをハッシュ化して設定
         String pass = EncryptUtil.getPasswordEncrypt(ev.getPassword(), pepper);
         ev.setPassword(pass);
 
@@ -106,7 +108,8 @@ public class EmployeeService extends ServiceBase{
 
         //登録内容のバリデーションを行う
         List<String> errors = EmployeeValidator.validate(this, ev, true, true);
-      //バリデーションエラーがなければデータを登録する
+
+        //バリデーションエラーがなければデータを登録する
         if (errors.size() == 0) {
             create(ev);
         }
@@ -123,11 +126,11 @@ public class EmployeeService extends ServiceBase{
      */
     public List<String> update(EmployeeView ev, String pepper) {
 
-        //idを条件に登録済みの従業員情報を取得する
+      //idを条件に登録済みの従業員情報を取得する
         EmployeeView savedEmp = findOne(ev.getId());
 
         boolean validateCode = false;
-        if (! savedEmp.getCode().equals(ev.getCode())) {
+        if (!savedEmp.getCode().equals(ev.getCode())) {
             //社員番号を更新する場合
 
             //社員番号についてのバリデーションを行う
@@ -144,7 +147,8 @@ public class EmployeeService extends ServiceBase{
             validatePass = true;
 
             //変更後のパスワードをハッシュ化し設定する
-            savedEmp.setPassword(EncryptUtil.getPasswordEncrypt(ev.getPassword(), pepper));
+            savedEmp.setPassword(
+                    EncryptUtil.getPasswordEncrypt(ev.getPassword(), pepper));
         }
 
         savedEmp.setName(ev.getName()); //変更後の氏名を設定する
