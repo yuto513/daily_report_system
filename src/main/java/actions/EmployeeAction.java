@@ -62,4 +62,12 @@ public class EmployeeAction extends ActionBase{
         //一覧画面を表示
         forward(ForwardConst.FW_EMP_INDEX);
     }
+
+    public void entryNew() throws ServletException, IOException {
+
+        putRequestScope(AttributeConst.TOKEN, getTokenId());
+        putRequestScope(AttributeConst.EMPLOYEE, new EmployeeView());
+
+        forward(ForwardConst.FW_EMP_NEW);
+    }
 }

@@ -128,6 +128,14 @@ public abstract class ActionBase {
     }
 
     /**
+     * セッションIDを取得する
+     * @return セッションID
+     */
+    protected String getTokenId() {
+        return request.getSession().getId();
+    }
+
+    /**
      * リクエストから表示を要求されているページ数を取得し、返却する
      * @return 要求されているページ数(要求がない場合は１)
      */
